@@ -24,10 +24,10 @@ type ZendeskCollector struct {
 func newZendeskCollector() *ZendeskCollector {
 	return &ZendeskCollector{
 		zendeskTicketCount: prometheus.NewDesc("zendesk_tickets_count",
-			"Zendesk ticket count", nil, nil,
+			"Zendesk ticket count", []string{"domain"}, nil,
 		),
 		zendeskQueueTime: prometheus.NewDesc("zendesk_queue_time",
-			"Zendesk queue time", nil, nil,
+			"Zendesk queue time", []string{"domain"}, nil,
 		),
 	}
 }
@@ -73,8 +73,8 @@ func (collector *ZendeskCollector) Collect(ch chan<- prometheus.Metric) {
 		}
 	}
 
-	ch <- prometheus.MustNewConstMetric(collector.zendeskTicketCount, prometheus.CounterValue, float64(len(tickets)))
-	ch <- prometheus.MustNewConstMetric(collector.zendeskQueueTime, prometheus.CounterValue, queueTime)
+	ch <- prometheus.MustNewConstMetric(collector.zendeskTicketCount, prometheus.CounterValue, float64(len(tickets)), os.Getenv("ZENDESK_DOMAIN"))
+	ch <- prometheus.MustNewConstMetric(collector.zendeskQueueTime, prometheus.CounterValue, queueTime, os.Getenv("ZENDESK_DOMAIN"))
 }
 
 func main() {
