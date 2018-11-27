@@ -90,7 +90,7 @@ func main() {
 		w.Write([]byte(`<html>
 			<head><title>Zendesk Exporter</title></head>
 			<body>
-			<h1>Node Exporter</h1>
+			<h1>Zendesk Exporter</h1>
 			<p><a href="/metrics">Metrics</a></p>
 			</body>
 			</html>`))
