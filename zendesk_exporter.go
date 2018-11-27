@@ -86,6 +86,15 @@ func main() {
 	// Start the HTTP server and expose
 	// any metrics on the /metrics endpoint.
 	http.Handle("/metrics", promhttp.Handler())
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`<html>
+			<head><title>Zendesk Exporter</title></head>
+			<body>
+			<h1>Node Exporter</h1>
+			<p><a href="/metrics">Metrics</a></p>
+			</body>
+			</html>`))
+	})
 	log.Info("Beginning to serve on port :9802")
 	log.Fatal(http.ListenAndServe(":9802", nil))
 }
