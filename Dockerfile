@@ -4,8 +4,8 @@ FROM golang:alpine AS builder
 # Git is required for fetching the dependencies.
 RUN apk update && apk add --no-cache git
 
-COPY . $GOPATH/src/mypackage/myapp/
-WORKDIR $GOPATH/src/mypackage/myapp/
+COPY . $GOPATH/src/tagnard/zendesk_exporter/
+WORKDIR $GOPATH/src/tagnard/zendesk_exporter/
 
 # Fetch dependencies.
 # Using go get.
