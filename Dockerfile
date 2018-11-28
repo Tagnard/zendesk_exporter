@@ -12,7 +12,7 @@ WORKDIR $GOPATH/src/tagnard/zendesk_exporter/
 RUN go get -d -v
 
 # Build the binary.
-RUN go build -o /go/bin/zendesk_exporter
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /go/bin/zendesk_exporter
 
 FROM drone/ca-certs:latest
 
