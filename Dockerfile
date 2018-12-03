@@ -18,6 +18,6 @@ RUN apk add --update --no-cache ca-certificates
 
 COPY --from=builder /go/bin/zendesk_exporter /bin/zendesk_exporter
 
-EXPOSE 9130
+EXPOSE 9802
 USER nobody
 ENTRYPOINT ["/bin/zendesk_exporter"]
