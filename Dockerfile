@@ -1,23 +1,23 @@
-FROM golang:alpine AS builder
+FROM golang:1.10-alpine3.7 as builder
 
-# Install git.
-# Git is required for fetching the dependencies.
-RUN apk update && apk add --no-cache git
+ENV GOPATH /go
+ENV PATH $PATH:$GOPATH/bin
+ENV CGO_ENABLED 0
 
-COPY . $GOPATH/src/github.com/tagnard/zendesk_exporter
-WORKDIR $GOPATH/src/github.com/tagnard/zendesk_exporter
+RUN  \
+  apk add --no-cache ca-certificates curl && \
+  apk add --no-cache --virtual .build-deps git && \
+  go get github.com/tagnard/zendesk_exporter/cmd/zendesk_exporter
 
-# Fetch dependencies.
-# Using go get.
-RUN go get -d -v
+# =============================================================================
 
-# Build the binary.
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /go/bin/zendesk_exporter
+FROM alpine:3.7
+LABEL maintainer="Emil Haugbergsmyr <emil@raeven.net>"
 
-FROM drone/ca-certs:latest
+RUN apk add --update --no-cache ca-certificates
 
-# Copy our static executable.
-COPY --from=builder /go/bin/zendesk_exporter /
+COPY --from=builder /go/bin/zendesk_exporter /bin/zendesk_exporter
 
-# Run the zendesk_exporter binary.
-ENTRYPOINT ["/zendesk_exporter"]
+EXPOSE 9130
+USER nobody
+ENTRYPOINT ["/bin/zendesk_exporter"]
