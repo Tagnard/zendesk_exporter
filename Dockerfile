@@ -1,4 +1,4 @@
-FROM golang:1.10-alpine3.7 as builder
+FROM golang:1.15-alpine3.12 as builder
 
 ENV CGO_ENABLED 0
 
@@ -9,11 +9,10 @@ ADD cmd/zendesk_exporter /go/src/zendesk_exporter/src
 WORKDIR /go/src/zendesk_exporter/src
 RUN go get -d -v
 RUN go build -o /go/bin/zendesk_exporter
-#RUN find /
 
 # =============================================================================
 
-FROM alpine:3.7
+FROM alpine:3.12
 LABEL maintainer="Emil Haugbergsmyr <emil@raeven.net>"
 
 RUN apk --no-cache add ca-certificates && update-ca-certificates
