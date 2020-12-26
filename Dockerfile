@@ -1,20 +1,21 @@
-FROM golang:1.10-alpine3.7 as builder
+FROM golang:1.15-alpine3.12 as builder
 
-ENV GOPATH /go
-ENV PATH $PATH:$GOPATH/bin
 ENV CGO_ENABLED 0
 
-RUN  \
-  apk add --no-cache ca-certificates curl && \
-  apk add --no-cache --virtual .build-deps git && \
-  go get github.com/tagnard/zendesk_exporter/cmd/zendesk_exporter
+RUN apk add --no-cache ca-certificates curl && \
+  apk add --no-cache --virtual .build-deps git
+
+ADD cmd/zendesk_exporter /go/src/zendesk_exporter/src
+WORKDIR /go/src/zendesk_exporter/src
+RUN go get -d -v
+RUN go build -o /go/bin/zendesk_exporter
 
 # =============================================================================
 
-FROM alpine:3.7
+FROM alpine:3.12
 LABEL maintainer="Emil Haugbergsmyr <emil@raeven.net>"
 
-RUN apk add --update --no-cache ca-certificates
+RUN apk --no-cache add ca-certificates && update-ca-certificates
 
 COPY --from=builder /go/bin/zendesk_exporter /bin/zendesk_exporter
 
